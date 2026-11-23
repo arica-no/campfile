@@ -1,0 +1,4 @@
+# Only the Caddyfile goes to the build, never the .env of this folder.
+*
+!Caddyfile
+!Caddyfile.separate

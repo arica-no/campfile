@@ -1,0 +1,3 @@
+# Crawling is allowed on purpose: every page answers with X-Robots-Tag: noindex, and a crawler that is blocked here never sees that header and may still index the bare URL.
+User-agent: *
+Disallow:

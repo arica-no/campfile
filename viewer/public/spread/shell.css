@@ -1,0 +1,72 @@
+/* The spread page's header (src/spread-view.ts spreadHtml): one 56px row, static (the designs measure from it), outside #spread. Phones add the design switch as a second row. The designs' own css starts below it. */
+.sp-bar{display:flex;align-items:center;gap:16px;height:56px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--ember)}
+.sp-logo{flex:none;width:24px;height:24px}
+.sp-title{display:flex;flex:1 1 0;min-width:0;font:600 15px/1.3 var(--sans);white-space:nowrap}
+.sp-q{flex:none;color:var(--dim);font-weight:500}
+.sp-name{min-width:0;overflow:hidden;text-overflow:ellipsis;color:var(--cream)}
+.sp-seg{display:flex;flex:none;gap:2px;padding:3px;border-radius:10px;background:var(--umber)}
+.sp-seg a{display:flex;align-items:center;justify-content:center;height:30px;padding:0 12px;border-radius:7px;color:var(--muted);font:600 13px/1 var(--sans);text-decoration:none;white-space:nowrap}
+.sp-seg a:hover:not([aria-current]){background:var(--wash);color:var(--cream)}
+.sp-seg a[aria-current]{background:var(--cream);color:var(--ember)}
+.sp-tools{display:flex;flex:none;align-items:center;gap:8px}
+.sp-short{display:none}
+.sp-ic{flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.sp-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 12px;border:0;border-radius:8px;background:none;box-shadow:inset 0 0 0 1px var(--line-strong);color:var(--cream);font:600 13px/1 var(--sans);text-decoration:none;white-space:nowrap;cursor:pointer}
+.sp-btn:hover{background:var(--wash)}
+.sp-btn[hidden]{display:none}
+.sp-primary{background:var(--flame);box-shadow:none;color:var(--ember)}
+.sp-primary:hover{background:var(--flame-hover)}
+/* The owner's status is the link to change it (the sheet's How it spread): the words always show, the chevron says it goes somewhere. */
+.sp-st{padding:0 8px 0 10px}
+.sp-st .sp-ic{color:var(--dim)}
+.sp-st .sp-chev{width:12px;height:12px;margin-left:-2px}
+/* Copy link's tick for 2 s after copying (shell.js), so a phone, which shows no label, sees it worked. */
+.sp-ok,.done .sp-ic:not(.sp-ok){display:none}
+.done .sp-ok{display:block}
+.sp-cta{display:inline-flex;align-items:center;height:36px;padding:0 4px;color:var(--dim);font-size:13px;text-decoration:none;white-space:nowrap}
+.sp-cta b{color:var(--cream);font-weight:700}
+.sp-cta:hover b{color:var(--flame)}
+.sp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Mid widths: the short status words. */
+@media (max-width:1100px){
+  .sp-st .sp-long{display:none}
+  .sp-st .sp-short{display:inline}
+}
+
+/* Small tablets and phones on their side: the title is the page's name alone (screen readers still get "How … spread") and the tools with a label shrink to their icon (each has its aria-label). */
+@media (max-width:900px){
+  .sp-q{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .sp-label{display:none}
+  .sp-btn:has(.sp-label){width:36px;padding:0}
+}
+
+/* Phones: the 56px row keeps the name and the tools, the design switch goes under it as two equal 38px tabs. */
+@media (max-width:640px){
+  .sp-bar{display:grid;grid-template:56px auto/auto minmax(0,1fr) auto;gap:0 10px;height:auto;padding:0 12px}
+  .sp-logo{width:22px;height:22px}
+  .sp-seg{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(2,1fr);margin-bottom:10px}
+  .sp-seg a{height:38px}
+  .sp-tools{grid-column:3;grid-row:1;gap:6px}
+  .sp-st{padding-left:12px}
+  .sp-st .sp-ic:not(.sp-chev){display:none} /* the words say it; the room goes to the name */
+  .sp-cta .sp-long{display:none}
+}
+
+/* The link-preview shot (public mode, ?shot=1; 1200×630): the logo and title at the left, Made with Campfile at the right, nothing to press. */
+[data-shot] .sp-seg,[data-shot] .sp-tools .sp-btn{display:none}
+
+/* Back to the app's sheet, for the owner who came from it (#from-sheet, the sheet's link): the page fades up out of the ember the sheet grew into, and fades out on Back (shell.js). */
+.sp-back{display:none}
+#from-sheet:target~.sp-bar .sp-back{display:inline-flex}
+#from-sheet:target~.sp-bar,#from-sheet:target~main{animation:sp-arrive .32s cubic-bezier(.22,1,.36,1)}
+@keyframes sp-arrive{from{opacity:0}}
+.leave .sp-bar,.leave main{opacity:0;transition:opacity .16s}
+/* Narrow: Back is a plain arrow, its glyph spaced like the logo (the box hangs 10px past both sides). */
+@media (max-width:900px){
+  .sp-bar .sp-back{margin:0 -10px;box-shadow:none}
+}
+/* Phones: Back takes the logo's place. */
+@media (max-width:640px){
+  #from-sheet:target~.sp-bar .sp-logo{display:none}
+}

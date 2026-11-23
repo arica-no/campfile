@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Isolation check</title>
+<!-- Publish this as a normal page, open its link in a browser, and wait 4 seconds: every line must say PASS but WebRTC's, a known gap. -->
+<pre id="out">running…</pre>
+<script>
+const lines = [];
+const report = (passed, name) => lines.push(`${passed ? 'PASS' : 'FAIL'}  ${name}`);
+const mustThrow = (name, read) => {
+  try { read(); report(false, name); } catch { report(true, name); }
+};
+
+mustThrow('cannot read cookies', () => document.cookie);
+mustThrow('cannot use localStorage', () => localStorage.length);
+mustThrow("cannot read the viewer page's cookies", () => parent.document.cookie);
+mustThrow("cannot read the viewer page's storage", () => parent.localStorage.length);
+// If this navigates the tab to example.com, the sandbox failed (this page never reaches the line below).
+try { top.location.href = 'https://example.com/'; } catch {}
+fetch('/robots.txt').then(() => report(false, 'cannot make network requests'), () => report(true, 'cannot make network requests'));
+// CSP has no say over WebRTC: a STUN answer (a srflx candidate) means the page reached a server of its choosing.
+let stun = false;
+try {
+  const peer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+  peer.onicecandidate = (e) => { if (e.candidate && / srflx /.test(e.candidate.candidate)) stun = true; };
+  peer.createDataChannel('probe');
+  peer.createOffer().then((offer) => peer.setLocalDescription(offer)).catch(() => {});
+} catch {}
+setTimeout(() => {
+  report(true, 'cannot navigate the top window');
+  report(!stun, 'cannot reach a server over WebRTC');
+  out.textContent = lines.join('\n');
+}, 3500);
+</script>

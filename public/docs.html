@@ -1,0 +1,62 @@
+<title>How Campfile works</title>
+<h1>How Campfile works</h1>
+<p class="meta">Share what you made with AI, with one link. New here? See <a href="/guide">what you can do, step by step</a>.</p>
+
+<p>You made a page with your AI: an article, an explainer, a page for your event. Tell your AI “Put my page on Campfile.” Campfile puts it online as a private draft. You check it, and when you are happy, you publish it to anyone with the link or only to people you approve.</p>
+
+<h2>Set up</h2>
+<p>About 3 minutes, once: follow the steps under <a href="{{APP_ORIGIN}}/guide">Add Campfile to your AI</a>. Claude (the Claude app or claude.ai, free plan included) adds Campfile as a connector at <code>{{APP_ORIGIN}}/mcp</code>; the same page covers ChatGPT on the Business, Enterprise and Edu plans, other chat apps, and AIs that run commands, like Claude Code or Codex.</p>
+
+<h2>Your pages</h2>
+<ul>
+<li><strong>Private first.</strong> Every new page starts unpublished, as a private draft. Open its link and log in with your email to see it. Nobody else can.</li>
+<li><strong>Publishing.</strong> Press <strong>Publish</strong> on the page, or tell your AI to publish it. Campfile tells your AI to publish only when you ask.</li>
+<li><strong>Who can open it.</strong> Choose <em>anyone with the link</em>, or <em>only people I approve</em>. With approval, visitors type their email on the page and ask; once you approve them, they get an email with a login link and a 6-digit code, and either one opens the page. Campfile emails you for the first 10 requests a day on each page; later ones still show under <strong>Manage</strong>, and a page holds at most 100 waiting requests. People you add yourself get an email with a link that opens the page straight away, up to 5 times within 7 days; after that the same link emails them a login link. Whoever opens it gets in, so the email asks them not to forward it. Links are unlisted, not secret: anyone who has a link to a page open to everyone can open it and pass it on.</li>
+<li><strong>See how it's shared.</strong> For a page open to anyone with the link, tick <strong>See how it's shared</strong> when you publish, or ask your AI to turn it on. Readers then see a box over the page asking whether they're happy for you to see how it travels; the page opens either way. Readers who press <strong>Allow</strong> get their own link to pass on: the address in their browser, or <strong>Your own link</strong> in the Campfile bar above the page (on a phone, the link button). If they forward the link they were sent instead of their own, the people it reaches count under the person whose link it is. Open <strong>Manage</strong>, then <strong>See how it spread</strong>, to see how it passed from reader to reader and how far it went; your AI can also tell you when each opened the page, from which country and on a phone or a computer. Each reader shows as "A reader". Tick <strong>Ask for their email</strong> too, and readers who allow it type an email, which your tree shows instead. Only you see it; Campfile doesn't check it and never emails it. Each entry is a browser, not a person: the same reader on another device is a new entry. AI assistants that open a link for someone show up by name, such as Claude. Ask your AI to show you or to clear it; coding agents read it at <code>GET /api/pages/&lt;id&gt;/sharing</code> and clear it with <code>DELETE</code> on the same address. Clearing deletes everything recorded; the page and every link keep working. Turning it off deletes nothing and breaks no link. Up to 1,000 entries are recorded per page.</li>
+<li><strong>Visits.</strong> Once a page is published, <strong>Manage</strong> shows about how many visitors opened it on each of the last 7 days, and in all since you published it. Nothing to tick, and readers see no box for it.</li>
+<li><strong>Your name, shown to readers.</strong> The box tells readers who wrote the page by name, never by your email. The first time you publish with <em>anyone with the link</em> on a page's Manage screen, it asks for that name, filled in with one made from your email (<em>amy.rivera@…</em> becomes Amy Rivera). We ask once. Leave it blank and readers see the name made from your email. Your AI and the API never ask; they use the name you gave, or the one made from your email.</li>
+<li><strong>Changing a page.</strong> Ask your AI to change it. The link stays the same and the old version is gone; there is no history.</li>
+<li><strong>Unpublishing and deleting.</strong> Unpublish makes the page a draft again; its link stops working for everyone else at once. Deleting is permanent.</li>
+<li><strong>Link previews.</strong> A page open to everyone shows its title when you share the link in a chat.</li>
+<li><strong>Limits.</strong> A page is one self-contained HTML file, up to 5 MB, with everything it needs inside it. It cannot load anything from other sites, save what visitors type, or set cookies. You can have up to 200 pages, and 100 MB of pages in all, drafts included. Your AI can create 50 new pages a day, and update your pages as often as you like; the count starts over at midnight UTC.</li>
+</ul>
+
+<h2>What your AI can do</h2>
+<div class="tw"><table>
+<tr><th>Tool</th><th>What it does</th></tr>
+<tr><td>Create page</td><td>Puts a new page online as a private draft and returns its link</td></tr>
+<tr><td>Update page</td><td>Replaces a page's content or title; the link stays the same</td></tr>
+<tr><td>Edit page</td><td>Changes parts of a page without sending all of it again; the link stays the same</td></tr>
+<tr><td>Find in page</td><td>Finds exact words in a page, so your AI can change just those</td></tr>
+<tr><td>Delete page</td><td>Deletes a page for good, when you ask</td></tr>
+<tr><td>List pages</td><td>Lists your pages, their links and who can open them</td></tr>
+<tr><td>Read page</td><td>Shows your AI a page's title, status and HTML, drafts included</td></tr>
+<tr><td>Who am I</td><td>Shows which Campfile account your AI is connected to, and every app connected to it</td></tr>
+<tr><td>Publish page</td><td>Publishes a page, changes who can open it, or turns <em>See how it's shared</em> on or off, when you ask</td></tr>
+<tr><td>Unpublish page</td><td>Makes a page a draft again, when you ask</td></tr>
+<tr><td>List people for a page</td><td>Shows who asked to open an approval page, and who is approved or refused</td></tr>
+<tr><td>See how a page is shared</td><td>Shows how a page spread, who opened it through whose link, as a tree your AI can sum up or draw</td></tr>
+<tr><td>Clear how a page is shared</td><td>Deletes everything recorded about how a page spread, when you ask; the page and its links keep working</td></tr>
+<tr><td>Let people in</td><td>Approves email addresses for a page and emails each of them a link to open it, when you ask</td></tr>
+<tr><td>Approve, deny or remove a person</td><td>Decides on one person's request, or removes their access, when you ask</td></tr>
+</table></div>
+<p>From your chats, Campfile only gets the pages and what you ask your AI to send it, like the email of someone to let in, or your own email and code if your AI sets Campfile up for you; it never sees the chats themselves.</p>
+
+<h2>Troubleshooting</h2>
+<h3>The code email does not arrive</h3>
+<p>Wait a minute and check your spam folder. The email comes from <code>{{SENDER}}</code>. You can ask for 5 codes an hour.</p>
+<h3>"That code is wrong or has expired"</h3>
+<p>A code works for 5 minutes and allows 5 tries. Ask for a new code and use the one in the newest email.</p>
+<h3>"Campfile has sent all the emails it can today"</h3>
+<p>Campfile has a daily email limit. Try again tomorrow, or email us if it keeps happening.</p>
+<h3>"You have created 50 new pages today"</h3>
+<p>That is the daily limit for new pages. Updating your existing pages still works. To make a new page, try again after midnight UTC.</p>
+<h3>Claude asks you to connect again</h3>
+<p>A connection that is not used for 30 days ends. Press <strong>Connect</strong> and log in with your email again; your pages are still there.</p>
+<h3>The link says "This page isn't published"</h3>
+<p>The page is a draft. If it is yours, log in on the page with your email. To let others see it, publish it.</p>
+<h3>A visitor cannot open an approval page</h3>
+<p>They need to type their email on the page to ask, and wait for you to approve them. Approve them on the page's Manage screen, or ask your AI to let them in. They then get an email with a login link and a 6-digit code: the link works for 15 minutes, the code for 5. After that they type their email on the page again and get a new code at once.</p>
+<h3>The page, or part of it, does not work</h3>
+<p>Pages cannot save what visitors type or remember anything between visits, use forms, take payments, show the browser’s own pop-up messages, open the browser’s print window, go full screen, copy to the clipboard, offer downloads or use the camera, microphone or location, and pictures, fonts or scripts from other sites don't load. Links to other sites work only when they open in a new tab. If you see a blank screen or a button that does nothing, tell your AI: “Make it work on Campfile.”</p>
+

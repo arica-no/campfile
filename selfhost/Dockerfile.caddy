@@ -1,0 +1,4 @@
+# The Caddyfile is baked in: a mounted file stays the operator's, which Caddy (root without capabilities) cannot read under a umask of 077 or 027, and one that git pull replaced is not seen by the running container.
+FROM caddy:2
+ARG CADDYFILE=Caddyfile
+COPY ${CADDYFILE} /etc/caddy/Caddyfile

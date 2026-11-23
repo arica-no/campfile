@@ -1,0 +1,12 @@
+# Advanced separate-site hosting: set both origins, then run
+# docker compose -f compose.yaml -f compose.separate.yaml --profile https up -d --build
+services:
+  campfile:
+    ports:
+      - ${BIND_ADDRESS:-127.0.0.1}:${VIEWER_PORT:-8788}:8788
+  caddy:
+    build:
+      args:
+        CADDYFILE: Caddyfile.separate
+    environment:
+      VIEWER_ORIGIN: ${VIEWER_ORIGIN:?Set VIEWER_ORIGIN for separate-site hosting}

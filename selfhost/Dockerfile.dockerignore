@@ -1,0 +1,18 @@
+# Only what selfhost/Dockerfile copies goes to the build; nothing else of the repository, and never a .env with secrets.
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!migrations
+!scripts/admin.ts
+!scripts/migrate.ts
+!src
+!public
+!viewer/public
+!selfhost
+selfhost/.env*
+selfhost/*.sql
+selfhost/*.tar
+selfhost/*.env
+selfhost/compose.override.yaml
+selfhost/screenshot

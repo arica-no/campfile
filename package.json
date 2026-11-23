@@ -1,0 +1,31 @@
+{
+  "name": "campfile",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "migrate": "node --disable-warning=ExperimentalWarning scripts/migrate.ts",
+    "admin": "node --disable-warning=ExperimentalWarning scripts/admin.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "^1.2.3",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@resvg/resvg-wasm": "2.6.2",
+    "hono": "4.13.13",
+    "nodemailer": "10.5.0",
+    "postgres": "3.4.9",
+    "satori": "0.63.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/nodemailer": "8.0.2",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

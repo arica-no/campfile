@@ -1,0 +1,21 @@
+# HTTPS for APP_ORIGIN; Compose fixes Caddy at the only address Campfile trusts for X-Forwarded-For.
+# A client that sends its request slowly is cut off here, instead of holding a connection for minutes.
+{
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 30s
+		}
+	}
+	# Both loggers write a request that Campfile does not answer (it is stopped, or an answer breaks off) with the visitor's address and the whole URL, a login-link token included.
+	log {
+		exclude http.log.error http.handlers.reverse_proxy
+	}
+}
+
+{$APP_ORIGIN} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy campfile:8787
+}
+

@@ -1,0 +1,174 @@
+# Run from this folder: docker compose up -d --build. No .env is needed for localhost.
+# Add APP_ORIGIN and SMTP settings to .env, then use --profile https for public HTTPS. The screenshot service runs by default: pages' link previews and their pictures in Your pages (docs/DEPLOY.md "Without screenshots" turns it off).
+name: campfile
+
+x-app-image: &app-image
+  image: campfile-selfhost
+  build:
+    context: ..
+    dockerfile: selfhost/Dockerfile
+
+x-settings-env: &settings-env
+  DATABASE_URL: ${DATABASE_URL:-}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+  PREVIEW_SECRET: ${PREVIEW_SECRET:-}
+  CONSENT_SECRET: ${CONSENT_SECRET:-}
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options: { max-size: 10m, max-file: '3' }
+
+x-hardening: &hardening
+  read_only: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  init:
+    <<: [*app-image, *logging, *hardening]
+    user: '0:0'
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER] # repair node-owned settings permissions; inspect pgdata without changing it
+    mem_limit: 128m
+    pids_limit: 32
+    environment:
+      <<: *settings-env
+      NODE_OPTIONS: '' # initialize before the image's preload can read the settings
+    command: ['node', 'selfhost/settings.mjs']
+    volumes:
+      - settings:/settings
+      - pgdata:/existing-pgdata:ro
+      - screenshot-key:/screenshot-key
+
+  campfile:
+    <<: [*app-image, *logging, *hardening]
+    restart: unless-stopped
+    mem_limit: 1g # uploads share the 96 MiB budget in selfhost/http.ts
+    pids_limit: 128
+    tmpfs: [/tmp]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *settings-env
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:8787}
+      VIEWER_ORIGIN: ${VIEWER_ORIGIN:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Campfile <signin@localhost>}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      OWNER_EMAIL: ${OWNER_EMAIL:-}
+      OWNER_PASSWORD: ${OWNER_PASSWORD:-}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES-172.29.88.254} # only the bundled Caddy; an explicitly empty value trusts none
+      SCREENSHOT_URL: ${SCREENSHOT_URL:-http://screenshot:3000}
+    ports:
+      - ${BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-8787}:8787
+    volumes:
+      - data:/data # pages and OAuth connector state
+      - settings:/settings:ro
+      - screenshot-key:/screenshot-key:ro # the secret the screenshot service proves itself with (selfhost/http.ts)
+    networks: [default, shots]
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:8787/agents').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+
+  postgres:
+    <<: [*logging, *hardening]
+    image: postgres:17-trixie # pin Debian too: its locale version affects indexes' sort order
+    restart: unless-stopped
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID] # entrypoint fixes ownership, then drops to postgres
+    mem_limit: 512m
+    pids_limit: 256
+    tmpfs: [/tmp, /var/run/postgresql]
+    command: ['postgres', '-c', 'max_connections=200']
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      POSTGRES_USER: campfile
+      POSTGRES_DB: campfile
+      POSTGRES_PASSWORD_FILE: /settings/postgres-password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - settings:/settings:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U campfile -d campfile']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Takes the link-preview screenshots (selfhost/screenshot/server.mjs). It renders pages strangers wrote, so it is the one container with no database, no settings volume and no way out but the app and the viewer.
+  screenshot:
+    <<: [*logging, *hardening]
+    build:
+      context: screenshot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true # reaps the processes of each shot's browser, which closes after the shot (server.mjs)
+    mem_limit: 1g
+    pids_limit: 256
+    cpus: 1.5
+    tmpfs: ['/tmp:size=256m']
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    networks: [shots]
+    environment:
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:8787}
+      VIEWER_ORIGIN: ${VIEWER_ORIGIN:-}
+    volumes:
+      - screenshot-key:/screenshot-key:ro
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+
+  caddy:
+    <<: [*logging, *hardening]
+    profiles: [https]
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+    restart: unless-stopped
+    cap_add: [NET_BIND_SERVICE]
+    mem_limit: 256m
+    pids_limit: 128
+    tmpfs: [/tmp]
+    depends_on:
+      campfile:
+        condition: service_healthy
+    networks:
+      default:
+        ipv4_address: 172.29.88.254
+    environment:
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:8787}
+    ports: # IPv4 only: Docker can collapse IPv6 visitors onto the gateway's address and shared rate limits
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+      - 0.0.0.0:443:443/udp
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.29.88.0/24
+  # Shared by the app and the screenshot service only: the service reaches nothing else of this install, and the database is not on it.
+  shots:
+
+volumes:
+  data:
+  pgdata:
+  settings:
+  screenshot-key:
+  caddy-data:
+  caddy-config:

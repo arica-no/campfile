@@ -1,0 +1,25 @@
+# Advanced isolated app/viewer sites, selected by compose.separate.yaml.
+{
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 30s
+		}
+	}
+	# Failed requests can include login-link tokens; keep them out of the log.
+	log {
+		exclude http.log.error http.handlers.reverse_proxy
+	}
+}
+
+{$APP_ORIGIN} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy campfile:8787
+}
+
+{$VIEWER_ORIGIN} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy campfile:8788
+}

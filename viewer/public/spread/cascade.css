@@ -1,0 +1,130 @@
+/* How it spread, Cascade: the round 6 "river" picture (k-cascade.html). Tokens and resets come from tokens.css; every rule lives under #spread. */
+#spread { display: block; width: 100%; max-width: 1240px; margin: 0 auto; padding: 22px 20px; font-variant-numeric: tabular-nums; }
+#spread .head { font: 700 28px/33px var(--display); letter-spacing: -0.015em; text-wrap: balance; }
+#spread .head em { font-style: normal; color: var(--flame); }
+#spread .quiet { margin-top: 6px; max-width: 68ch; color: var(--muted); font-size: 15.5px; line-height: 1.45; text-wrap: balance; }
+#spread .quiet b { color: var(--cream); font-weight: 600; white-space: nowrap; }
+#spread .qs { display: inline-block; }
+
+/* Nobody yet: the headline, the quiet line, then the picture card holding only the "You" block */
+#spread .viz-card.empty-card { display: grid; place-items: center; height: 200px; margin-top: 16px; }
+#spread .you-block { width: 24px; height: 24px; border: 2.5px solid var(--flame); border-radius: 5px; background: var(--cream); }
+#spread .transport[hidden] { display: none; } /* one person, or everything on one day: nothing to replay */
+/* The social card (data-shot): headline, quiet line, then only the picture card down to 20px above the bottom */
+#spread.shot { padding-bottom: 0; }
+#spread.shot .transport, #spread.shot .sparks-bar, #spread.shot .level-strip, #spread.shot .key-note { display: none; }
+#spread.shot .viz-card { margin-top: 16px; }
+
+/* Play and the day scrubber */
+#spread .transport { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 18px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--umber); }
+#spread .play-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; min-width: 104px; padding: 0 14px 0 12px; border: 0; border-radius: 8px; background: var(--cream); color: var(--ember); font: 700 13.5px/1 var(--sans); cursor: pointer; transition: transform 0.1s, background-color 0.15s; }
+#spread .play-btn:hover { background: var(--primary-hover); }
+#spread .play-btn:active { transform: scale(0.98); }
+#spread .play-btn svg { width: 15px; height: 15px; fill: currentColor; }
+#spread .scrubber-wrap { flex: 1 1 360px; display: flex; flex-direction: column; gap: 4px; min-width: 300px; }
+#spread .scrubber-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; font-size: 12.5px; color: var(--dim); }
+#spread .scrubber-top b { color: var(--cream); font-size: 13.5px; }
+#spread .clock span, #spread .hint-drag { white-space: nowrap; }
+#spread .scrubber-track { position: relative; height: 28px; display: flex; align-items: center; cursor: pointer; touch-action: none; border-radius: 5px; }
+#spread .spark-canvas { width: 100%; height: 26px; border-radius: 5px; background: var(--well); display: block; }
+#spread .key-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12.5px; color: var(--dim); }
+#spread .key-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+#spread .key-note { display: none; margin-top: 8px; color: var(--dim); font-size: 12px; } /* phones: the ×N key moves here so the legend stays one line, as in ember */
+#spread .dot-spark { flex: none; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle, var(--flame) 0 36%, rgba(var(--flame-rgb), 0.3) 40% 100%); }
+#spread .dot-reader { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--coal); }
+#spread .dot-ai { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--dim); opacity: 0.5; }
+#spread .dot-you { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--cream); border: 2px solid var(--flame); }
+#spread .mult { padding: 1px 5px; border-radius: 4px; background: var(--flame-wash); color: var(--flame); font-size: 11px; font-style: normal; font-weight: 700; line-height: 1.4; }
+
+/* Sparks bar (FIX6, the same in both designs): flame left edge; sentence, 10px, label + chips, 12px, divider, 10px, hint */
+#spread .sparks-bar { position: relative; overflow: clip; display: grid; gap: 12px; margin-top: 14px; padding: 14px 18px; border-radius: 10px; background: var(--umber-2); font-size: 14px; line-height: 1.4; }
+#spread .sparks-bar > .edge { position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--flame); }
+#spread .sparks-main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#spread .sparks-text { min-height: 20px; text-wrap: balance; }
+#spread .sparks-text b { color: var(--cream); font-weight: 600; }
+#spread .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+#spread .chips-lbl { color: var(--dim); font-size: 13px; }
+#spread .chip { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; height: 30px; padding: 0 12px 0 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--ember); color: var(--cream); font: 600 13px/1 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color 0.15s, color 0.15s; }
+#spread .chip:hover:not([aria-pressed="true"]) { background: var(--chip-hover); }
+#spread .chip[aria-pressed="true"] { background: var(--cream); color: var(--ember); }
+#spread .chip-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--flame); }
+#spread .chip-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+#spread .chip-sep { flex: none; color: var(--dim); }
+#spread .chip[aria-pressed="true"] .chip-sep { color: var(--umber-2); }
+#spread .chip-n { flex: none; color: var(--flame); font-weight: 700; }
+#spread .chip[aria-pressed="true"] .chip-n { color: var(--ember); }
+/* Under the chips: a 1px divider, then 10px, then the hint; the hint and the picked spark's card share one cell, so the bar keeps its height. */
+#spread .sparks-sub { display: grid; min-width: 0; padding-top: 10px; border-top: 1px solid var(--line); }
+#spread .sparks-sub > * { grid-area: 1 / 1; min-width: 0; }
+#spread .hint { color: var(--dim); font-size: 13px; line-height: 1.45; }
+#spread .card { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px; visibility: hidden; color: var(--muted); font-size: 13px; }
+#spread .card b { color: var(--flame); font-weight: 700; }
+#spread .c-name { color: var(--cream); font-size: 14px; font-weight: 700; }
+#spread .c-fact { white-space: nowrap; }
+#spread .is-ai .c-open { white-space: normal; } /* "An AI read it. AIs don't share it on." may need two lines on a phone */
+#spread .c-facts { display: contents; }
+#spread .has-card .hint { visibility: hidden; }
+#spread .has-card .card { visibility: visible; }
+#spread .reset-pill { min-height: 24px; margin-left: auto; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--ember); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+#spread .reset-pill:hover { background: var(--wash); color: var(--cream); }
+#spread .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The picture and the level strip */
+#spread .viz-card { position: relative; margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--well); overflow: clip; }
+#spread .viz-canvas-wrap { position: relative; width: 100%; height: 440px; }
+#spread canvas.main-stage { display: block; width: 100%; height: 100%; touch-action: manipulation; }
+#spread canvas.main-stage:focus-visible { outline-offset: -3px; }
+#spread .level-strip { position: relative; display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); border-top: 1px solid var(--line); background: var(--umber); }
+#spread .lvl-cell { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "tag mult" "count count" "pass pass"; align-content: start; align-items: center; min-width: 0; padding: 11px 10px; border-right: 1px solid var(--line); }
+#spread .lvl-cell:last-child { border-right: 0; }
+#spread .lvl-tag { grid-area: tag; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--dim); font-size: 12px; font-weight: 600; white-space: nowrap; }
+#spread .lvl-cell .mult { grid-area: mult; }
+#spread .lvl-you .mult { margin-left: 4px; } /* the first cell's name (an author's can be long) is cut with "…" before its chip and never comes closer to it than 4px */
+#spread .lvl-count { grid-area: count; margin-top: 3px; color: var(--muted); font-size: 12.5px; line-height: 1.2; white-space: nowrap; }
+#spread .lvl-count b { color: var(--cream); font-size: 18px; font-weight: 700; }
+#spread .lvl-pass { grid-area: pass; margin-top: 2px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+#spread .lvl-pass b { color: var(--flame); font-weight: 600; }
+/* When the cells are too narrow for one row, the strip becomes a list. */
+#spread .level-strip[data-layout="list"] { grid-template-columns: 1fr; }
+#spread .level-strip[data-layout="list"] .lvl-cell { grid-template-columns: 62px minmax(0, 1fr) auto 46px; grid-template-areas: "tag count pass mult"; column-gap: 10px; padding: 10px 14px; border-right: 0; border-bottom: 1px solid var(--line); }
+#spread .level-strip[data-layout="list"] .lvl-cell:last-child { border-bottom: 0; }
+#spread .level-strip[data-layout="list"] .lvl-count, #spread .level-strip[data-layout="list"] .lvl-pass { margin-top: 0; }
+#spread .level-strip[data-layout="list"] .lvl-cell .mult { justify-self: end; }
+@media (max-width: 380px) { #spread .level-strip[data-layout="list"] .lvl-cell { grid-template-columns: 62px minmax(0, 1fr) 46px; grid-template-areas: "tag count mult" "tag pass mult"; column-gap: 8px; padding: 10px 12px; } #spread .level-strip[data-layout="list"] .lvl-pass { margin-top: 2px; } } /* "999 of those shared it" and a 3-digit count are too wide for one line on a 360px phone: the line goes under the count */
+/* Levels 3 and up are one "Extended". One row: a pill rides the strip's top border over those columns and no dividers run between them.
+   List: the name stands on the first of those rows, and their dividers start after the name column (14 + 62 + 10 = 86px; 12 + 62 + 8 = 82px on a 360px phone). */
+#spread .ext-legend { display: none; }
+#spread .level-strip[data-layout="row"] .ext-legend { position: absolute; top: -7px; left: calc(100% * 3 / var(--n)); right: 0; display: flex; align-items: center; height: 13px; padding-left: 10px; pointer-events: none; }
+#spread .ext-legend span { padding: 2.75px 7px 0; border: 1px solid var(--line); border-radius: 7px; background: var(--umber); color: var(--dim); font-size: 11px; font-weight: 600; line-height: 8.25px; }
+#spread .ext-legend::after { content: ""; flex: 1; height: 1px; margin: 0 10px 0 6px; background: var(--dim); opacity: 0.45; }
+#spread .level-strip[data-layout="row"] .ext-first .lvl-tag { visibility: hidden; }
+#spread .level-strip[data-layout="row"] .ext:not(:last-child) { border-right-color: transparent; }
+#spread .level-strip[data-layout="list"] .ext:not(:last-child) { border-bottom-color: transparent; background: linear-gradient(var(--line), var(--line)) right bottom / calc(100% - 86px) 1px no-repeat; }
+@media (max-width: 380px) { #spread .level-strip[data-layout="list"] .ext:not(:last-child) { background-size: calc(100% - 82px) 1px; } }
+
+@media (max-width: 699px) { /* the same phone header, quiet line and transport card as ember */
+  #spread { padding: 16px 12px 36px; }
+  #spread .head { font-size: 23px; line-height: 27px; }
+  #spread .quiet { font-size: 14.5px; }
+  #spread .transport { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; margin-top: 14px; padding: 10px 12px; }
+  #spread .play-btn { min-width: 0; height: 44px; }
+  #spread .scrubber-wrap { min-width: 0; }
+  #spread .hint-drag { display: none; }
+  #spread .key-legend { grid-column: 1 / -1; gap: 6px 12px; font-size: 12px; }
+  #spread .key-legend .key-mult { display: none; }
+  #spread .key-note { display: flex; }
+  #spread .sparks-bar { margin-top: 12px; padding: 12px 14px; }
+  #spread .chip { height: 36px; }
+}
+/* Phones (the script sets .vert when the picture is narrower than 640px, so the CSS and the drawing always agree):
+   the picture runs top to bottom, and the picked spark's card is a sheet at the bottom of the screen. */
+#spread.vert .reset-pill { padding: 7px 12px; font-size: 12.5px; }
+#spread.vert .card { position: fixed; left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); z-index: 40; display: none; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name level" "facts facts" "open reset"; align-items: baseline; gap: 3px 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--umber-2); box-shadow: var(--lift); visibility: visible; }
+#spread.vert .has-card .card { display: grid; }
+#spread.vert .has-card .hint { visibility: visible; }
+#spread.vert.picked { padding-bottom: 150px; }
+#spread.vert .c-name { grid-area: name; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#spread.vert .c-level { grid-area: level; }
+#spread.vert .c-facts { grid-area: facts; display: flex; flex-wrap: wrap; gap: 0 14px; }
+#spread.vert .c-open { grid-area: open; }
+#spread.vert .reset-pill { grid-area: reset; align-self: center; }
